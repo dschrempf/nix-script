@@ -1,7 +1,8 @@
 use anyhow::{Context, Result};
 use core::hash::{Hash, Hasher};
-use rnix::types::{List, TypedNode, Wrapper};
-use rnix::{SyntaxKind, SyntaxNode};
+use rnix::ast::List;
+use rnix::{Root, SyntaxKind, SyntaxNode};
+use rowan::ast::AstNode;
 use std::cmp::Ordering;
 use std::fmt::{self, Display};
 use std::str::FromStr;
@@ -15,18 +16,21 @@ pub struct Expr {
 
 impl Expr {
     pub fn parse_as_list(source: &str) -> Result<Vec<Self>> {
-        let root = rnix::parse(&format!("[{source}]"))
-            .as_result()
-            .context("failed to parse the source when wrapping as a list")?
-            .root();
-
-        Ok(
-            List::cast(root.inner().context("root did not have an inner node")?)
-                .context("could not parse this list as a list")?
-                .items()
-                .map(Self::from_node)
-                .collect(),
+        let root: Root = Root::parse(&format!("[{source}]"))
+            .ok()
+            .context("could not parse Nix expression as list")?;
+        let list: List = List::cast(
+            root.expr()
+                .expect("root of ast should have a child")
+                .syntax()
+                .to_owned(),
         )
+        .context("could not get back expression list")?;
+
+        Ok(list
+            .items()
+            .map(|e| Self::from_node(e.syntax().to_owned()))
+            .collect())
     }
 
     fn from_node(node: SyntaxNode) -> Expr {
@@ -100,12 +104,13 @@ impl FromStr for Expr {
 
     fn from_str(source: &str) -> Result<Self> {
         Ok(Self::from_node(
-            rnix::parse(source)
-                .as_result()
-                .context("failed to parse Nix expression")?
-                .root()
-                .inner()
-                .context("root node did not have an inner node")?,
+            Root::parse(source)
+                .ok()
+                .context("could not parse Nix expression")?
+                .expr()
+                .expect("root of ast should have a child")
+                .syntax()
+                .to_owned(),
         ))
     }
 }
