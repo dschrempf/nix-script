@@ -90,30 +90,33 @@ this purpose).
 
 ### Exporting a script
 
-In `nix-script` version 1, it was common to run up against the limits of a single file, whether that meant having namespace issues or simply a single file becoming unwieldy.
-Getting aroung this commonly meant giving up on all the nice things that nix-script provided (like faster feedback loops and transparent compilation caching) so it was a tough tradeoff.
+Version 2 of `nix-script` introduced two new flags: `--build-root` and
+`--export` to handle multiple files. In detail, if your script needs multiple
+files, tell `nix-script` about the project root with `#!buildRoot` (or
+`--build-root`), and it will include all the files in that directory during
+builds.
 
-Nix-script version 2 has two new flags to help with this: `--build-root` and `--export`.
-Once you get to the point in your program's life cycle where you need multiple files, tell nix-script where the project root is with `#!buildRoot` (or `--build-root`) and we'll include all the files in that directory during builds.
-This lets you do things like splitting out your source into multiple files, all of which will be checked when we try to determine whether or not we have a cache hit.
+You can also export (`--export`) the Nix derivation `default.nix` created by
+`nix-script`. If you put that file (or any `default.nix`) in your build root,
+`nix-script` will use that one instead of generating a new one.
 
-Once even that is not enough, you can include `--export` in your nix-script invocation to print out the `default.nix` that we would have used to build your script.
-If you put that (or any `default.nix`) inside the directory specified in `#!buildRoot`, we'll use that instead of generating our own.
-
-Once you get to the point of having a fully-realized directory with a `default.nix` inside, you've arrived at a "real" derivation, and you can then use any Nix tooling you like to further modify your project.
+Once you get to the point of having a directory with a `default.nix`, you have
+arrived at a "real" derivation, and you may use any Nix tooling to further
+modify your project.
 
 ### Parsing Directives
 
-If you are making a wrapper script for a new language, you can also use `--build-root` to hold package manager files and extremely custom `build.nix` files.
-We also provide a `--parse` flag which will ask `nix-script` to parse any directives in the script and give them to you as JSON on stdout.
+If you are making a wrapper script for a new language, you can also use
+`--build-root` to hold package manager files and custom `build.nix` files. We
+also provide a `--parse` flag which will ask `nix-script` to parse any
+directives in the script and give them to you as JSON on stdout.
 
-**Caution:** be aware that the format here is not stable yet and may change in backwards-incompatible ways without a corresponding major version bump in nix-script.
-If you have any feedback on the data returned by `--parse`, please open an issue!
+**Caution:** be aware that the format here is not stable yet. If you have any
+feedback on the data returned by `--parse`, please open an issue!
 
 ## `nix-script-bash`
 
-`nix-script-bash` exists to let you specify exact versions of your dependencies via Nix.
-For example:
+`nix-script-bash` lets you specify dependencies of Bash scripts. For example:
 
 ```bash
 #!/usr/bin/env nix-script-bash
@@ -124,29 +127,44 @@ jq --help
 
 ## `nix-script-haskell`
 
-`nix-script-haskell` is a convenience wrapper for Haskell scripts.
-In addition to the regular `nix-script` options, `nix-script-haskell` lets you specify some Haskell-specific options:
+`nix-script-haskell` is a convenience wrapper for Haskell scripts. In addition
+to the regular `nix-script` options, `nix-script-haskell` has some
+Haskell-specific options:
 
-| Shebang line        | Notes                                                                                                                      | Example                        |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------|--------------------------------|
-| `#!haskellPackages` | Haskell packages to build with (you can get a list of available names by running `nix-env -qaPA nixpkgs.haskellPackages`.) | `#!haskellPackages text aeson` |
-| `#!ghcFlags`        | Additional flags to pass to the compiler.                                                                                  | `#!ghcFlags -threaded`         |
+| Shebang line        | Notes                                                                                                         | Example                        |
+|---------------------|---------------------------------------------------------------------------------------------------------------|--------------------------------|
+| `#!haskellPackages` | Haskell dependencies (you can get a list of available packages with `nix-env -qaPA nixpkgs.haskellPackages`.) | `#!haskellPackages text aeson` |
+| `#!ghcFlags`        | Additional compiler flags.                                                                                    | `#!ghcFlags -threaded`         |
 
-You can get quick compilation feedback with [`ghcid`](https://github.com/ndmitchell/ghcid) by running `nix-script-haskell --ghcid path/to/your/script.hs`.
+You can get compilation feedback with [`ghcid`](https://github.com/ndmitchell/ghcid) by running `nix-script-haskell --ghcid path/to/your/script.hs`.
 
-# Controlling `nixpkgs` version
+# Controlling the Nixpkgs version
 
 `nix-script` will generate derivations that `import <nixpkgs> {}` by default.
-That means all you need to do to control which `nixpkgs` your scripts are built with is to set `NIX_PATH`, for example to `NIX_PATH=nixpkgs=/nix/store/HASHHASHHASH-source`.
-For projects, this is reasonably easy to do in a `mkShell` (for example by setting `NIX_PATH = "nixpkgs=${pkgs.path}"`,) or by using `makeWrapper` on `nix-script` in a custom derivation.
+This means your scripts are built with the Nixpkgs version set in the `NIX_PATH`
+environment variable.
 
-`NIX_PATH` is included in cache key calculations, so if you change your package set your scripts will automatically be rebuilt the next time you run them.
+For example, you can use a specific Nixpkgs version available in your Nix store with
+
+```
+NIX_PATH=nixpkgs=/nix/store/HASHHASHHASH-source
+```
+
+The `NIX_PATH` environment variable is included in cache key calculations, so if
+you change your package set your scripts will automatically be rebuilt the next
+time you run them.
 
 # Climate Action
 
-I want my open-source work to support projects addressing the climate crisis (for example, projects in clean energy, public transit, reforestation, or sustainable agriculture.)
-If you are working on such a project, and find a bug or missing feature in any of my libraries, **please let me know and I will treat your issue as high priority.**
-I'd also be happy to support such projects in other ways, just ask!
+The original author Brian Hicks has added the following note which I fully
+support:
+
+> I want my open-source work to support projects addressing the climate crisis
+> (for example, projects in clean energy, public transit, reforestation, or
+> sustainable agriculture.) If you are working on such a project, and find a bug
+> or missing feature in any of my libraries, **please let me know and I will
+> treat your issue as high priority.** I'd also be happy to support such
+> projects in other ways, just ask!
 
 # License
 
