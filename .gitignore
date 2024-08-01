@@ -1,4 +1,10 @@
-/cache
-/result
-/target
+# Rust.
+debug/
+target/
+**/*.rs.bk
+
+# Tooling.
 /.direnv/
+
+# Nix-script.
+/cache
