@@ -16,18 +16,12 @@
       nixpkgs,
     }:
     let
-      rustTarget =
-        {
-          name,
-          version,
-          pkgs,
-          naerskLib,
-          postInstall ? "",
-        }:
-        naerskLib.buildPackage {
-          inherit name;
-          inherit version;
-          inherit postInstall;
+
+      mkNixScript =
+        pkgs: naerskLib:
+        naerskLib.buildPackage rec {
+          name = "nix-script";
+          version = "3.0.0";
 
           root = ./.;
 
@@ -35,7 +29,6 @@
             pkgs.clippy
             pkgs.makeWrapper
           ];
-          target = [ name ];
 
           preBuild = ''
             # Make sure the version of the packages and the Nix derivations match.
@@ -47,17 +40,6 @@
           checkPhase = ''
             cargo clippy -- --deny warnings
           '';
-
-          copyBinsFilter = ''select(.reason == "compiler-artifact" and .executable != null and .profile.test == false and .target.name == "${name}")'';
-        };
-
-      mkNixScript =
-        pkgs: naerskLib:
-        rustTarget {
-          name = "nix-script";
-          version = "3.0.0";
-          inherit pkgs;
-          naerskLib = naerskLib;
         };
 
       mkNixScriptBash =
@@ -69,31 +51,13 @@
             "$@"
         '';
 
-      mkNixScriptHaskell =
-        pkgs: naerskLib:
-        rustTarget rec {
-          name = "nix-script-haskell";
-          version = "3.0.0";
-          inherit pkgs;
-          inherit naerskLib;
-
-          postInstall = ''
-            # Avoid trying to package the dependencies step.
-            if test -f $out/bin/${name}; then
-              wrapProgram $out/bin/${name} \
-                --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nix-script ]}
-            fi
-          '';
-        };
-
       mkNixScriptAll =
-        pkgs:
+        pkgs: naerskLib:
         pkgs.symlinkJoin {
           name = "nix-script-all";
           paths = [
-            pkgs.nix-script
-            pkgs.nix-script-haskell
-            pkgs.nix-script-bash
+            (mkNixScript pkgs naerskLib)
+            (mkNixScriptBash pkgs)
           ];
         };
     in
@@ -104,10 +68,7 @@
           naerskLib = naersk.lib."${final.system}";
         in
         {
-          nix-script = mkNixScript prev naerskLib;
-          nix-script-bash = mkNixScriptBash final;
-          nix-script-haskell = mkNixScriptHaskell final naerskLib;
-          nix-script-all = mkNixScriptAll final;
+          nix-script = mkNixScriptAll prev naerskLib;
         };
     }
     // flake-utils.lib.eachDefaultSystem (
@@ -121,12 +82,9 @@
       {
         packages = {
           nix-script = pkgs.nix-script;
-          nix-script-bash = pkgs.nix-script-bash;
-          nix-script-haskell = pkgs.nix-script-haskell;
-          nix-script-all = pkgs.nix-script-all;
         };
 
-        defaultPackage = pkgs.nix-script-all;
+        defaultPackage = pkgs.nix-script;
 
         devShell = pkgs.mkShell {
           NIX_PKGS = nixpkgs;
