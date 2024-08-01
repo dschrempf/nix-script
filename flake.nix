@@ -37,13 +37,15 @@
           ];
           target = [ name ];
 
-          doCheck = true;
-          checkPhase = ''
-            cargo clippy -- --deny warnings
-
+          preBuild = ''
             # Make sure the version of the packages and the Nix derivations match.
             grep -q -e 'version = "${version}"' ${name}/Cargo.toml || \
               (echo "Nix Flake version mismatch ${version}!" && exit 1)
+          '';
+
+          doCheck = true;
+          checkPhase = ''
+            cargo clippy -- --deny warnings
           '';
 
           copyBinsFilter = ''select(.reason == "compiler-artifact" and .executable != null and .profile.test == false and .target.name == "${name}")'';
@@ -76,7 +78,7 @@
           inherit naerskLib;
 
           postInstall = ''
-            # avoid trying to package the dependencies step
+            # Avoid trying to package the dependencies step.
             if test -f $out/bin/${name}; then
               wrapProgram $out/bin/${name} \
                 --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.nix-script ]}
