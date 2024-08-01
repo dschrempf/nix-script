@@ -86,9 +86,6 @@
             cargo-audit
             cargo-edit
             cargo-udeps
-
-            # System.
-            libiconv
           ];
         };
       }
