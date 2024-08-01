@@ -2,8 +2,8 @@ mod inputs;
 
 use crate::clean_path::clean_path;
 use anyhow::{Context, Result};
-use directives::expr::Expr;
 use inputs::Inputs;
+use nix_script_directives::expr::Expr;
 use std::collections::BTreeSet;
 use std::fmt::{self, Display};
 use std::path::{Path, PathBuf};

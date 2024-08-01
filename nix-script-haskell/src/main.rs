@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use directives::Directives;
+use nix_script_directives::Directives;
 use std::path::PathBuf;
 use std::process::{Command, ExitStatus};
 
