@@ -15,60 +15,46 @@
       naersk,
       nixpkgs,
     }:
-    let
-
-      mkNixScript =
-        pkgs: naerskLib:
-        naerskLib.buildPackage rec {
-          name = "nix-script";
-          version = "3.0.0";
-
-          root = ./.;
-
-          buildInputs = [
-            pkgs.clippy
-            pkgs.makeWrapper
-          ];
-
-          preBuild = ''
-            # Make sure the version of the packages and the Nix derivations match.
-            grep -q -e 'version = "${version}"' ${name}/Cargo.toml || \
-              (echo "Nix Flake version mismatch ${version}!" && exit 1)
-          '';
-
-          doCheck = true;
-          checkPhase = ''
-            cargo clippy -- --deny warnings
-          '';
-        };
-
-      mkNixScriptBash =
-        pkgs:
-        pkgs.writeShellScriptBin "nix-script-bash" ''
-          exec ${pkgs.nix-script}/bin/nix-script \
-            --build-command 'cp $SRC $OUT' \
-            --interpreter bash \
-            "$@"
-        '';
-
-      mkNixScriptAll =
-        pkgs: naerskLib:
-        pkgs.symlinkJoin {
-          name = "nix-script-all";
-          paths = [
-            (mkNixScript pkgs naerskLib)
-            (mkNixScriptBash pkgs)
-          ];
-        };
-    in
     {
       overlay =
         final: prev:
         let
           naerskLib = naersk.lib."${final.system}";
+          nixScript = naerskLib.buildPackage rec {
+            name = "nix-script";
+            version = "3.0.0";
+
+            root = ./.;
+
+            nativeBuildInputs = [ prev.clippy ];
+
+            preBuild = ''
+              # Make sure the version of the packages and the Nix derivations match.
+              grep -q -e 'version = "${version}"' ${name}/Cargo.toml || \
+                (echo "Nix Flake version mismatch ${version}!" && exit 1)
+            '';
+
+            doCheck = true;
+            checkPhase = ''
+              cargo clippy -- --deny warnings
+            '';
+          };
+          nixScriptBash = prev.writeShellScriptBin "nix-script-bash" ''
+            exec ${nixScript}/bin/nix-script \
+              --build-command 'cp $SRC $OUT' \
+              --interpreter bash \
+              "$@"
+          '';
+          nixScriptAll = prev.symlinkJoin {
+            name = "nix-script-all";
+            paths = [
+              nixScript
+              nixScriptBash
+            ];
+          };
         in
         {
-          nix-script = mkNixScriptAll prev naerskLib;
+          nix-script = nixScriptAll;
         };
     }
     // flake-utils.lib.eachDefaultSystem (
