@@ -41,11 +41,9 @@
           checkPhase = ''
             cargo clippy -- --deny warnings
 
-            # Make sure we've listed the right version here (we can't grab
-            # it from the manifest because we use a virtual manifest for the
-            # various targets.) If this test fails, fix by making the `version`
-            # attribute the same as the one in `nix-script/Cargo.toml`
-            grep -q -e 'version = "${version}"' ${name}/Cargo.toml
+            # Make sure the version of the packages and the Nix derivations match.
+            grep -q -e 'version = "${version}"' ${name}/Cargo.toml || \
+              (echo "Nix Flake version mismatch ${version}!" && exit 1)
           '';
 
           copyBinsFilter = ''select(.reason == "compiler-artifact" and .executable != null and .profile.test == false and .target.name == "${name}")'';
@@ -55,7 +53,7 @@
         pkgs: naerskLib:
         rustTarget {
           name = "nix-script";
-          version = "2.0.0";
+          version = "3.0.0";
           inherit pkgs;
           naerskLib = naerskLib;
         };
@@ -73,7 +71,7 @@
         pkgs: naerskLib:
         rustTarget rec {
           name = "nix-script-haskell";
-          version = "2.0.0";
+          version = "3.0.0";
           inherit pkgs;
           inherit naerskLib;
 
