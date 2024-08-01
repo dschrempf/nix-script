@@ -1,3 +1,12 @@
+* Unreleased
+:PROPERTIES:
+:ID:       1db59859-b93e-46e7-bf03-62b8af7df0cd
+:END:
+Contains breaking changes.
+
+- Remove separate Nix derivations. Only provide =nix-script= which bundles all
+  available interpreters.
+
 * Version 3.0.0
 This is the first release by myself (Dominik Schrempf) after Brian Hicks has
 flagged =nix-script= unmaintained. This release does not contain any breaking

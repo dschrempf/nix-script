@@ -1,4 +1,12 @@
 
+# Unreleased
+
+Contains breaking changes.
+
+-   Remove separate Nix derivations. Only provide `nix-script` which bundles all
+    available interpreters.
+
+
 # Version 3.0.0
 
 This is the first release by myself (Dominik Schrempf) after Brian Hicks has
