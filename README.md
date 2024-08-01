@@ -5,6 +5,9 @@ moving on, but I am currently not adding new functionality.
 
 Contact me, if you want to participate and improve `nix-script`!
 
+Version 3.0.0 is the first release by myself (Dominik Schrempf). See the
+[Changelog](./CHANGELOG.md) for more information.
+
 # Nix-script
 
 With `nix-script`, you can
