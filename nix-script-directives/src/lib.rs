@@ -5,6 +5,7 @@ mod parser;
 use crate::expr::Expr;
 use anyhow::{Context, Result};
 use core::hash::{Hash, Hasher};
+use parser::Parser;
 use rnix::SyntaxKind;
 use std::collections::HashMap;
 use std::path::Path;
@@ -29,8 +30,8 @@ impl Directives {
         Self::parse(indicator, &source)
     }
 
-    pub fn parse(indicator: &str, source: &str) -> Result<Self> {
-        let parser = parser::Parser::new(indicator).context("could not construct a parser")?;
+    fn parse(indicator: &str, source: &str) -> Result<Self> {
+        let parser = Parser::new(indicator).context("could not construct a parser")?;
         let fields = parser.parse(source);
 
         Self::from_directives(fields)
