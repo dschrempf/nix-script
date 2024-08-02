@@ -74,22 +74,22 @@
 
         devShell = pkgs.mkShell {
           NIX_PKGS = nixpkgs;
-          packages = with pkgs; [
-            # Rust.
-            cargo
-            clippy
-            rustc
-            rustfmt
-            rust-analyzer
+          packages =
+            with pkgs;
+            [
+              # Rust.
+              cargo
+              clippy
+              rustc
+              rustfmt
+              rust-analyzer
 
-            # External Cargo commands.
-            cargo-audit
-            cargo-edit
-            cargo-udeps
-
-            # System.
-            libiconv
-          ];
+              # External Cargo commands.
+              cargo-audit
+              cargo-edit
+              cargo-udeps
+            ]
+            ++ (lib.optionals stdenv.isDarwin [ libiconv ]);
         };
       }
     );
