@@ -28,27 +28,21 @@ nix-env -if https://github.com/dschrempf/nix-script/archive/main.tar.gz
 
 This project's CI also pushes Linux and macOS builds to
 [`dschrempf-nix-script.cachix.org`](https://app.cachix.org/cache/dschrempf-nix-script)
-automatically, meaning `cachix add dschrempf-nix-script` should set you up to
-compile fewer things.
+automatically, meaning `cachix add dschrempf-nix-script` should set you up.
 
 ## Installation with Flakes
 
-We provide these `package` attributes:
+Use the `nix-script` package Flake output which combines `nix-script`,
+`nix-script-bash`, and `nix-script-haskell`.
 
-- `nix-script-all` (the default package): contains everything below
-- `nix-script`: only `nix-script`
-- `nix-script-bash`: only `nix-script-bash`
-- `nix-script-haskell`: only `nix-script-haskell`
-
-We also provide a Nixpkgs `overlay`, which has all of these.
+We also provide a Nixpkgs `overlay` providing the `nix-script` package.
 
 ## Installation with Niv
 
 1. Add `nix-script` to Niv with `niv add BrianHicks/nix-script`.
-2. Then, `import sources.nix-script { };`
-3. You have the same things described in the Flakes section above, except you
-   will have to explicitly reference things like
-   `overlay."${builtins.currentSystem}"`.
+2. Then, `import sources.nix-script { };`.
+3. Use `nix-script` or the overlay; you will have to explicitly reference the
+   current system like so: `overlay."${builtins.currentSystem}"`.
 
 # Commands
 
