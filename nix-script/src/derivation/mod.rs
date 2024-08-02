@@ -33,19 +33,20 @@ impl Derivation {
         nixpkgs_options: Option<&Expr>,
     ) -> Result<Self> {
         log::trace!(
-            "creating a new derivation with root of {} and src of {}",
+            "creating a new derivation with root {} and src {}",
             root.display(),
             src.display()
         );
 
-        let final_nixpkgs_options =
-            match nixpkgs_options {
-                // Argh! I don't love this clone but it seems to be the least
-                // unreasonable way around the fact that we don't own the
-                // expressions we're being passed.
-                Some(options) => options.clone(),
-                None => ("{ }").parse().context("hardcoded empty attrset did not parse successfully. This is a bug and should be reported.")?
-            };
+        let final_nixpkgs_options = match nixpkgs_options {
+            // Argh! I don't love this clone but it seems to be the least
+            // unreasonable way around the fact that we don't own the
+            // expressions we're being passed.
+            Some(options) => options.clone(),
+            None => ("{ }").parse().context(
+                "hardcoded empty attrset did not parse successfully; please report this bug",
+            )?,
+        };
 
         Ok(Self {
             inputs: Inputs::from(vec![
