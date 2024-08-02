@@ -25,11 +25,11 @@ impl Parser {
                 continue;
             }
 
-            let without_indicator = line[self.indicator.len()..].trim_start();
-            let mut words = without_indicator.split(' ');
+            let line_without_indicator = line[self.indicator.len()..].trim_start();
+            let mut words = line_without_indicator.split_whitespace();
 
             if let Some(key) = words.next() {
-                let value = without_indicator[key.len()..].trim_start();
+                let value = line_without_indicator[key.len()..].trim_start();
 
                 if value.is_empty() {
                     log::warn!("skipping directive \"{}\" because value was empty", key);
