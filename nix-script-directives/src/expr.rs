@@ -38,7 +38,7 @@ impl Expr {
     }
 
     pub fn is_leaf(&self) -> bool {
-        matches!(self.kind(), SyntaxKind::NODE_IDENT)
+        self.kind() == SyntaxKind::NODE_IDENT
     }
 }
 
