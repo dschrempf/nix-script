@@ -88,7 +88,7 @@ impl FromStr for Expr {
     }
 }
 
-/// Unwrap parentheses.
+/// Unwrap parentheses when converting from a [`SyntaxNode`].
 impl From<SyntaxNode> for Expr {
     fn from(outer: SyntaxNode) -> Expr {
         if outer.kind() == SyntaxKind::NODE_PAREN {
@@ -141,23 +141,17 @@ mod tests {
 
         #[test]
         fn unwraps_root() {
-            assert_eq!(SyntaxKind::NODE_IDENT, Expr::from_str("a").unwrap().kind())
+            assert!(Expr::from_str("a").unwrap().is_leaf())
         }
 
         #[test]
         fn unwraps_parens() {
-            assert_eq!(
-                SyntaxKind::NODE_IDENT,
-                Expr::from_str("(a)").unwrap().kind()
-            )
+            assert!(Expr::from_str("(a)").unwrap().is_leaf())
         }
 
         #[test]
         fn unwraps_all_parens() {
-            assert_eq!(
-                SyntaxKind::NODE_IDENT,
-                Expr::from_str("((a))").unwrap().kind()
-            )
+            assert!(Expr::from_str("((a))").unwrap().is_leaf())
         }
     }
 
