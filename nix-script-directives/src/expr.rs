@@ -19,17 +19,17 @@ impl Expr {
         let root: Root = Root::parse(&format!("[{source}]"))
             .ok()
             .context("could not parse Nix expression as list")?;
-        let list: List = List::cast(
-            root.expr()
-                .expect("root of ast should have a child")
-                .syntax()
-                .to_owned(),
-        )
-        .context("could not get back expression list")?;
+        let syntax_node: SyntaxNode = root
+            .expr()
+            .expect("root of ast should have a child")
+            .syntax()
+            .clone();
+        let list: List =
+            List::cast(syntax_node).context("could not get back expression as list")?;
 
         Ok(list
             .items()
-            .map(|e| Self::from(e.syntax().to_owned()))
+            .map(|e| Self::from(e.syntax().clone()))
             .collect())
     }
 
@@ -41,10 +41,10 @@ impl Expr {
         matches!(self.kind(), SyntaxKind::NODE_IDENT)
     }
 
+    // We're explicit that we don't need tokens most of the time (instead of
+    // being explicit when we *do* need them) since it's always safe to add more
+    // parentheses but not always safe to leave them off.
     pub fn needs_parens_in_list(&self) -> bool {
-        // We're explicit that we don't need tokens most of the time (instead
-        // of being explicit when we *do* need them) since it's always safe to
-        // add more parentheses but not always safe to leave them off.
         !matches!(self.kind(), SyntaxKind::NODE_IDENT)
     }
 }
@@ -90,7 +90,7 @@ impl FromStr for Expr {
                 .expr()
                 .expect("root of ast should have a child")
                 .syntax()
-                .to_owned(),
+                .clone(),
         ))
     }
 }

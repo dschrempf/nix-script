@@ -159,7 +159,7 @@ impl Directives {
     pub fn merge_runtime_files(&mut self, new: &[PathBuf]) {
         for item in new {
             if !self.runtime_files.contains(item) {
-                self.runtime_files.push(item.to_owned())
+                self.runtime_files.push(item.clone())
             }
         }
     }
