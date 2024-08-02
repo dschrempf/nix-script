@@ -37,13 +37,13 @@ impl Expr {
         self.parsed.kind()
     }
 
-    pub fn is_extractable(&self) -> bool {
+    pub fn is_leaf(&self) -> bool {
         matches!(self.kind(), SyntaxKind::NODE_IDENT)
     }
 
     // We're explicit that we don't need tokens most of the time (instead of
     // being explicit when we *do* need them) since it's always safe to add more
-    // parentheses but not always safe to leave them off.
+    // parentheses but not always safe to omit them.
     pub fn needs_parens_in_list(&self) -> bool {
         !matches!(self.kind(), SyntaxKind::NODE_IDENT)
     }
@@ -201,14 +201,14 @@ mod tests {
         #[test]
         fn ident_yes() {
             let parsed = Expr::from_str("a").unwrap();
-            assert!(parsed.is_extractable());
+            assert!(parsed.is_leaf());
         }
 
         #[test]
         fn apply_no() {
             let parsed =
                 Expr::from_str("haskellPackages.ghcWithPackages (ps: [ ps.text ])").unwrap();
-            assert!(!parsed.is_extractable());
+            assert!(!parsed.is_leaf());
         }
     }
 

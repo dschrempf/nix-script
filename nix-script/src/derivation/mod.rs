@@ -72,7 +72,7 @@ impl Derivation {
 
     pub fn add_build_inputs(&mut self, build_inputs: Vec<Expr>) {
         for build_input in build_inputs {
-            if build_input.is_extractable() {
+            if build_input.is_leaf() {
                 log::trace!("extracting build input `{}`", build_input);
                 self.inputs
                     .insert(build_input.to_string(), Some(format!("pkgs.{build_input}")));
@@ -105,7 +105,7 @@ impl Derivation {
 
     pub fn add_runtime_inputs(&mut self, runtime_inputs: Vec<Expr>) {
         for runtime_input in runtime_inputs {
-            if runtime_input.is_extractable() {
+            if runtime_input.is_leaf() {
                 log::trace!("extracting build input `{}`", runtime_input);
                 self.inputs.insert(
                     runtime_input.to_string(),
