@@ -227,13 +227,13 @@ impl Display for Derivation {
     }
 }
 
-fn fmt_list(f: &mut fmt::Formatter<'_>, inputs: &BTreeSet<Expr>) -> Result<(), fmt::Error> {
+fn fmt_list(f: &mut fmt::Formatter<'_>, exprs: &BTreeSet<Expr>) -> Result<(), fmt::Error> {
     write!(f, "[")?;
-    for input in inputs {
-        if input.needs_parens_in_list() {
-            write!(f, " ({input})")?;
+    for expr in exprs {
+        if !expr.is_leaf() {
+            write!(f, " ({expr})")?;
         } else {
-            write!(f, " {input}")?;
+            write!(f, " {expr}")?;
         }
     }
     write!(f, " ]")
