@@ -29,28 +29,8 @@ impl Expr {
 
         Ok(list
             .items()
-            .map(|e| Self::from_node(e.syntax().to_owned()))
+            .map(|e| Self::from(e.syntax().to_owned()))
             .collect())
-    }
-
-    fn from_node(node: SyntaxNode) -> Expr {
-        let mut out = node;
-
-        loop {
-            if out.kind() == SyntaxKind::NODE_PAREN {
-                if let Some(inner) = out.children().next() {
-                    out = inner;
-                    continue;
-                }
-            }
-
-            break;
-        }
-
-        Self {
-            raw: out.to_string(),
-            parsed: out,
-        }
     }
 
     pub fn kind(&self) -> SyntaxKind {
@@ -103,7 +83,7 @@ impl FromStr for Expr {
     type Err = anyhow::Error;
 
     fn from_str(source: &str) -> Result<Self> {
-        Ok(Self::from_node(
+        Ok(Self::from(
             Root::parse(source)
                 .ok()
                 .context("could not parse Nix expression")?
@@ -112,6 +92,28 @@ impl FromStr for Expr {
                 .syntax()
                 .to_owned(),
         ))
+    }
+}
+
+impl From<SyntaxNode> for Expr {
+    fn from(node: SyntaxNode) -> Expr {
+        let mut out = node;
+
+        loop {
+            if out.kind() == SyntaxKind::NODE_PAREN {
+                if let Some(inner) = out.children().next() {
+                    out = inner;
+                    continue;
+                }
+            }
+
+            break;
+        }
+
+        Self {
+            raw: out.to_string(),
+            parsed: out,
+        }
     }
 }
 
