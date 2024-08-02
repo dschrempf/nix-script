@@ -88,31 +88,25 @@ impl FromStr for Expr {
                 .ok()
                 .context("could not parse Nix expression")?
                 .expr()
-                .expect("root of ast should have a child")
+                .expect("root of AST should not be empty")
                 .syntax()
                 .clone(),
         ))
     }
 }
 
+/// Unwrap parentheses.
 impl From<SyntaxNode> for Expr {
-    fn from(node: SyntaxNode) -> Expr {
-        let mut out = node;
-
-        loop {
-            if out.kind() == SyntaxKind::NODE_PAREN {
-                if let Some(inner) = out.children().next() {
-                    out = inner;
-                    continue;
-                }
+    fn from(outer: SyntaxNode) -> Expr {
+        if outer.kind() == SyntaxKind::NODE_PAREN {
+            if let Some(inner) = outer.children().next() {
+                return Self::from(inner);
             }
-
-            break;
         }
 
         Self {
-            raw: out.to_string(),
-            parsed: out,
+            raw: outer.to_string(),
+            parsed: outer,
         }
     }
 }
