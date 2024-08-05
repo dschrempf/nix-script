@@ -68,7 +68,7 @@ impl Directives {
         match fields.get(field) {
             Some(value) => {
                 if value.len() != 1 {
-                    anyhow::bail!("I got multiple `{}` directives, and I don't know which to use. Remove all but one and try again!", field);
+                    anyhow::bail!("multiple `{}` directives but need a single one", field);
                 }
 
                 Ok(Some(value[0]))
@@ -89,7 +89,7 @@ impl Directives {
                 match parsed.kind() {
                     SyntaxKind::NODE_ATTR_SET => Ok(Some(parsed)),
                     other => anyhow::bail!(
-                        "I expected the `{}` directive to be a Nix record, but it was a `{:?}`",
+                        "`{}` directive should be a Nix record but is a `{:?}`",
                         field,
                         other
                     ),
