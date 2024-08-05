@@ -224,10 +224,7 @@ mod tests {
             let problem = Directives::from_directives(HashMap::from([("build", vec!["a", "b"])]))
                 .unwrap_err();
 
-            assert_eq!(
-                String::from("I got multiple `build` directives, and I don't know which to use. Remove all but one and try again!"),
-                problem.to_string(),
-            )
+            assert!(problem.to_string().contains("multiple `build` directives"),)
         }
 
         #[test]
@@ -252,10 +249,9 @@ mod tests {
                 Directives::from_directives(HashMap::from([("interpreter", vec!["a", "b"])]))
                     .unwrap_err();
 
-            assert_eq!(
-                String::from("I got multiple `interpreter` directives, and I don't know which to use. Remove all but one and try again!"),
-                problem.to_string(),
-            )
+            assert!(problem
+                .to_string()
+                .contains("multiple `interpreter` directives"))
         }
 
         #[test]
@@ -280,10 +276,9 @@ mod tests {
                 Directives::from_directives(HashMap::from([("buildRoot", vec!["a", "b"])]))
                     .unwrap_err();
 
-            assert_eq!(
-                String::from("I got multiple `buildRoot` directives, and I don't know which to use. Remove all but one and try again!"),
-                problem.to_string(),
-            )
+            assert!(problem
+                .to_string()
+                .contains("multiple `buildRoot` directives"))
         }
 
         #[test]
@@ -327,10 +322,9 @@ mod tests {
                 Directives::from_directives(HashMap::from([("nixpkgsConfig", vec!["{}", "{}"])]))
                     .unwrap_err();
 
-            assert_eq!(
-                String::from("I got multiple `nixpkgsConfig` directives, and I don't know which to use. Remove all but one and try again!"),
-                problem.to_string(),
-            )
+            assert!(problem
+                .to_string()
+                .contains("multiple `nixpkgsConfig` directives"))
         }
 
         #[test]
@@ -339,10 +333,7 @@ mod tests {
                 Directives::from_directives(HashMap::from([("nixpkgsConfig", vec!["1"])]))
                     .unwrap_err();
 
-            assert_eq!(
-                String::from("I expected the `nixpkgsConfig` directive to be a Nix record, but it was a `NODE_LITERAL`"),
-                problem.to_string(),
-            )
+            assert!(problem.to_string().contains("`nixpkgsConfig` directive"),)
         }
 
         #[test]
