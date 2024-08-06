@@ -24,8 +24,7 @@ impl Expr {
             .expect("root of ast should have a child")
             .syntax()
             .clone();
-        let list: List =
-            List::cast(syntax_node).context("could not get back expression as list")?;
+        let list: List = List::cast(syntax_node).context("could not cast syntax node to list")?;
 
         Ok(list
             .items()
@@ -160,19 +159,19 @@ mod tests {
 
         #[test]
         fn single_item() {
-            let parsed = Expr::parse_as_list("a").unwrap();
+            let exprs = Expr::parse_as_list("a").unwrap();
 
-            assert_eq!(1, parsed.len());
-            assert_eq!("a", parsed[0].raw);
+            assert_eq!(1, exprs.len());
+            assert_eq!("a", exprs[0].raw);
         }
 
         #[test]
         fn multiple_items() {
-            let parsed = Expr::parse_as_list("a b").unwrap();
+            let exprs = Expr::parse_as_list("a b").unwrap();
 
-            assert_eq!(2, parsed.len());
-            assert_eq!("a", parsed[0].raw);
-            assert_eq!("b", parsed[1].raw);
+            assert_eq!(2, exprs.len());
+            assert_eq!("a", exprs[0].raw);
+            assert_eq!("b", exprs[1].raw);
         }
     }
 
@@ -181,15 +180,15 @@ mod tests {
 
         #[test]
         fn ident_yes() {
-            let parsed = Expr::from_str("a").unwrap();
-            assert!(parsed.is_leaf());
+            let expr = Expr::from_str("a").unwrap();
+            assert!(expr.is_leaf());
         }
 
         #[test]
         fn apply_no() {
-            let parsed =
-                Expr::from_str("haskellPackages.ghcWithPackages (ps: [ ps.text ])").unwrap();
-            assert!(!parsed.is_leaf());
+            let haskell_env = "haskellPackages.ghcWithPackages (ps: [ ps.text ])";
+            let expr = Expr::from_str(haskell_env).unwrap();
+            assert!(!expr.is_leaf());
         }
     }
 
