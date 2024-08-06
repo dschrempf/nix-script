@@ -139,10 +139,8 @@ impl Directives {
         Ok(())
     }
 
-    pub fn maybe_override_interpreter(&mut self, maybe_new: &Option<String>) {
-        if maybe_new.is_some() {
-            maybe_new.clone_into(&mut self.interpreter)
-        }
+    pub fn override_interpreter(&mut self, interpreter: &str) {
+        self.interpreter = Some(interpreter.to_owned());
     }
 
     pub fn merge_runtime_inputs(&mut self, new: &[String]) -> Result<()> {

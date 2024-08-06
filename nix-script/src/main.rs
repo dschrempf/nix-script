@@ -177,7 +177,9 @@ impl Opts {
         directives
             .merge_build_inputs(&self.build_inputs)
             .context("could not add build inputs provided on the command line")?;
-        directives.maybe_override_interpreter(&self.interpreter);
+        if let Some(interpreter) = &self.interpreter {
+            directives.override_interpreter(interpreter)
+        }
         directives
             .merge_runtime_inputs(&self.runtime_inputs)
             .context("could not add runtime inputs provided on the command line")?;
