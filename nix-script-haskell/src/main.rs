@@ -64,10 +64,10 @@ impl Opts {
         let build_command = format!(
             "mv $SRC $SRC.hs; ghc {} -o $OUT $SRC.hs",
             directives
-                .raw
+                .all
                 .get("ghcFlags")
                 .map(|ps| ps.join(" "))
-                .unwrap_or_else(|| String::from(" "))
+                .unwrap_or_default()
         );
         log::debug!("build command is `{}`", build_command);
         nix_script.arg("--build-command").arg(build_command);
@@ -75,7 +75,7 @@ impl Opts {
         let compiler = format!(
             "haskellPackages.ghcWithPackages (ps: with ps; [ {} ])",
             directives
-                .raw
+                .all
                 .get("haskellPackages")
                 .map(|ps| ps.join(" "))
                 .unwrap_or_default()

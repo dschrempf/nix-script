@@ -21,7 +21,7 @@ pub struct Directives {
     pub runtime_inputs: Vec<Expr>,
     pub runtime_files: Vec<PathBuf>,
     pub nixpkgs_config: Option<Expr>,
-    pub raw: HashMap<String, Vec<String>>,
+    pub all: HashMap<String, Vec<String>>,
 }
 
 impl Directives {
@@ -31,7 +31,7 @@ impl Directives {
     }
 
     fn parse(indicator: &str, source: &str) -> Result<Self> {
-        let parser = Parser::new(indicator).context("could not construct a parser")?;
+        let parser = Parser::new(indicator).context("could not construct parser")?;
         let fields = parser.parse(source);
 
         Self::from_directives(fields)
@@ -54,7 +54,7 @@ impl Directives {
             runtime_inputs,
             runtime_files,
             nixpkgs_config,
-            raw: fields
+            all: fields
                 .iter()
                 .map(|(k, v)| (k.to_string(), v.iter().map(|s| s.to_string()).collect()))
                 .collect(),
@@ -68,7 +68,7 @@ impl Directives {
         match fields.get(field) {
             Some(value) => {
                 if value.len() != 1 {
-                    anyhow::bail!("multiple `{}` directives but need a single one", field);
+                    anyhow::bail!("multiple `{}` directives but need exactly one", field);
                 }
 
                 Ok(Some(value[0]))
@@ -312,7 +312,7 @@ mod tests {
 
             assert_eq!(
                 Some(&vec!["other".to_string()]),
-                directives.raw.get("other")
+                directives.all.get("other")
             )
         }
 
