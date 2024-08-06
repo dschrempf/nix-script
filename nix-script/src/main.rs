@@ -184,9 +184,11 @@ impl Opts {
             .merge_runtime_inputs(&self.runtime_inputs)
             .context("could not add runtime inputs provided on the command line")?;
         directives.merge_runtime_files(&self.runtime_files);
-        directives
-            .maybe_override_nixpkgs_config(self.nixpkgs_config.as_ref())
-            .context("could not set nixpkgs config provided on the command line")?;
+        if let Some(expr) = &self.nixpkgs_config {
+            directives
+                .override_nixpkgs_config(expr)
+                .context("could not set nixpkgs config provided on the command line")?;
+        }
 
         // Second place we might bail early: if we're requesting a shell instead
         // of building and running the script.
