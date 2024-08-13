@@ -45,16 +45,16 @@ struct Opts {
     #[clap(long, default_value("nix-script"), hide(true))]
     nix_script_bin: PathBuf,
 
-    /// The script and args to pass to nix-script
+    /// The script and arguments to pass to nix-script
     #[arg(num_args = 1.., required = true)]
-    script_and_args: Vec<String>,
+    script_and_arguments: Vec<String>,
 }
 
 impl Opts {
     fn run(&self) -> Result<ExitStatus> {
         let (script, args) = self
-            .parse_script_and_args()
-            .context("could not parse script and args")?;
+            .get_script_and_arguments()
+            .context("could not get script and arguments")?;
 
         let directives = Directives::from_file("#!", &script)
             .context("could not parse directives from script")?;
@@ -109,13 +109,16 @@ impl Opts {
         child.wait().context("could not run the script")
     }
 
-    fn parse_script_and_args(&self) -> Result<(PathBuf, Vec<String>)> {
+    fn get_script_and_arguments(&self) -> Result<(PathBuf, Vec<String>)> {
         log::trace!("parsing script and args");
-        let mut script_and_args = self.script_and_args.iter();
 
-        let script = PathBuf::from(script_and_args.next().context("I need at least a script name to run, but didn't get one. This represents an internal error, and you should open a bug!")?);
+        let script = PathBuf::from(
+            self.script_and_arguments
+                .first()
+                .context("no script to run; this is a bug; please report")?,
+        );
 
-        Ok((script, self.script_and_args[1..].to_vec()))
+        Ok((script, self.script_and_arguments[1..].to_vec()))
     }
 }
 
@@ -128,7 +131,7 @@ fn main() {
     match opts.run().map(|status| status.code()) {
         Ok(Some(code)) => std::process::exit(code),
         Ok(None) => {
-            log::warn!("we didn't receive an exit code; was the script killed with a signal?");
+            log::warn!("no exit code; was the script killed with a signal?");
             std::process::exit(1)
         }
         Err(err) => {
