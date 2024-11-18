@@ -1,5 +1,11 @@
 {
   inputs = {
+    # Required when installing `nix-script` without Flakes. See `default.nix`.
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
+
     flake-utils.url = "github:numtide/flake-utils";
 
     naersk.url = "github:nix-community/naersk";
@@ -14,6 +20,7 @@
       flake-utils,
       naersk,
       nixpkgs,
+      ...
     }:
     {
       overlay =
