@@ -8,6 +8,8 @@ Contact me, if you want to participate and improve `nix-script`!
 Version 3.0.0 is the first release by myself (Dominik Schrempf). See the
 [Changelog](./CHANGELOG.md) for more information.
 
+Please also consider using [`Magix`](#Magix), see below.
+
 # Nix-script
 
 With `nix-script`, you can
@@ -166,3 +168,10 @@ support:
 # License
 
 `nix-script` is licensed under the BSD 3-Clause license, located at `LICENSE`.
+
+# Magix
+
+My rust is a bit rusty, and `nix-script` is a complex project. Maybe a bit more
+complex that it needs to be. I tried building a simpler (but also less
+feature-rich) alternative in Haskell:
+[Magix](https://github.com/dschrempf/magix).
