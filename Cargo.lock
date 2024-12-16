@@ -349,7 +349,7 @@ dependencies = [
  "anyhow",
  "log",
  "rnix",
- "rowan",
+ "rowan 0.16.1",
  "serde",
 ]
 
@@ -486,7 +486,7 @@ version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bb35cedbeb70e0ccabef2a31bcff0aebd114f19566086300b8f42c725fc2cb5f"
 dependencies = [
- "rowan",
+ "rowan 0.15.16",
 ]
 
 [[package]]
@@ -494,6 +494,18 @@ name = "rowan"
 version = "0.15.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a542b0253fa46e632d27a1dc5cf7b930de4df8659dc6e720b647fc72147ae3d"
+dependencies = [
+ "countme",
+ "hashbrown",
+ "rustc-hash",
+ "text-size",
+]
+
+[[package]]
+name = "rowan"
+version = "0.16.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "417a3a9f582e349834051b8a10c8d71ca88da4211e4093528e36b9845f6b5f21"
 dependencies = [
  "countme",
  "hashbrown",
