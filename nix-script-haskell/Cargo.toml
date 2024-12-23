@@ -8,7 +8,7 @@ anyhow = "1.0.95"
 clap = { version = "4.5.23", features = [ "std", "color", "suggestions", "derive", "cargo", "env" ] }
 nix-script-directives = { path = "../nix-script-directives" }
 log = "0.4.22"
-env_logger = "0.11.5"
+env_logger = "0.11.6"
 
 [dev-dependencies]
 assert_cmd = "2.0.16"
