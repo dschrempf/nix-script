@@ -6,6 +6,6 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.95"
 log = "0.4.22"
-rnix = "0.11.0"
+rnix = "0.12.0"
 rowan = "0.15.16"
 serde = { version = "1.0.217", features = [ "derive" ] }
