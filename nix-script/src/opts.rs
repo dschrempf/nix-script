@@ -289,7 +289,7 @@ impl Opts {
             drop(builder);
             // Release lock.
             log::debug!("releasing lock");
-            lock_file.unlock().context("could not release lock")?;
+            fs2::FileExt::unlock(&lock_file).context("could not release lock")?;
             // Do not remove the lock file because other tasks may still be
             // waiting for obtaining a lock on the file.
         } else {
