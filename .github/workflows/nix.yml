@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - uses: cachix/install-nix-action@v30
+      - uses: cachix/install-nix-action@v31
       - run: nix flake update
       - name: Create PR
         env:
