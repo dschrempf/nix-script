@@ -32,7 +32,7 @@ impl Parser {
                 let value = line_without_indicator[key.len()..].trim_start();
 
                 if value.is_empty() {
-                    log::warn!("skipping directive \"{}\" because value was empty", key);
+                    log::warn!("skipping directive \"{key}\" because value was empty");
                     continue;
                 }
 
