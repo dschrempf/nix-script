@@ -255,7 +255,7 @@ impl Opts {
             // even when another builder has done the job for us in the
             // meantime.
             let lock_file_path = env::temp_dir().join(target_unique_id);
-            log::debug!("creating lock file path: {:?}", lock_file_path);
+            log::debug!("creating lock file path: {lock_file_path:?}");
             let lock_file =
                 File::create(lock_file_path.clone()).context("could not create lock file")?;
             log::debug!("locking");
@@ -357,17 +357,17 @@ impl Opts {
         }
 
         for input in &directives.build_inputs {
-            log::trace!("adding build input `{}` to packages", input);
+            log::trace!("adding build input `{input}` to packages");
             command.arg("-p").arg(input.to_string());
         }
 
         for input in &directives.runtime_inputs {
-            log::trace!("adding runtime input `{}` to packages", input);
+            log::trace!("adding runtime input `{input}` to packages");
             command.arg("-p").arg(input.to_string());
         }
 
         if let Some(run) = &self.run {
-            log::trace!("running `{}`", run);
+            log::trace!("running `{run}`");
             command.arg("--run").arg(run);
         }
 

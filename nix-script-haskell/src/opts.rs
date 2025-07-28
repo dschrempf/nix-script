@@ -69,7 +69,7 @@ impl Opts {
                 .map(|ps| ps.join(" "))
                 .unwrap_or_default()
         );
-        log::debug!("build command is `{}`", build_command);
+        log::debug!("build command is `{build_command}`");
         nix_script.arg("--build-command").arg(build_command);
 
         let compiler = format!(

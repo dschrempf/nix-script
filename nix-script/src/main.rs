@@ -10,7 +10,7 @@ fn main() {
     env_logger::Builder::from_env("NIX_SCRIPT_LOG").init();
 
     let opts = Opts::parse();
-    log::trace!("opts: {:?}", opts);
+    log::trace!("opts: {opts:?}");
 
     match opts.run().map(|status| status.code()) {
         Ok(Some(code)) => std::process::exit(code),
