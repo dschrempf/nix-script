@@ -1,3 +1,11 @@
+### Looking for new maintainer
+
+I have completely switched over to using
+[Magix](https://github.com/dschrempf/magix) and am looking for a new maintainer
+for `nix-script`. Please contact me!
+
+---
+
 This version of `nix-script` is a fork of the [original version by Brian
 Hicks](https://github.com/BrianHicks/nix-script) which has been flagged
 unmaintained. I am fixing bugs and regressions caused by the Rust ecosystem
@@ -8,7 +16,7 @@ Contact me, if you want to participate and improve `nix-script`!
 Version 3.0.0 is the first release by myself (Dominik Schrempf). See the
 [Changelog](./CHANGELOG.md) for more information.
 
-Please also consider using [`Magix`](#Magix), see below.
+Please also consider using [Magix](#Magix), see below.
 
 # Nix-script
 
