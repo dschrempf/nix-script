@@ -7,7 +7,7 @@ edition = "2021"
 anyhow = "1.0.99"
 clap = { version = "4.5.47", features = [ "std", "color", "suggestions", "derive", "cargo", "env" ] }
 nix-script-directives = { path = "../nix-script-directives" }
-log = "0.4.27"
+log = "0.4.28"
 env_logger = "0.11.6"
 
 [dev-dependencies]
