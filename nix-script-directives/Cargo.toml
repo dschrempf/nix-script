@@ -8,4 +8,4 @@ anyhow = "1.0.99"
 log = "0.4.27"
 rnix = "0.12.0"
 rowan = "0.15.16"
-serde = { version = "1.0.219", features = [ "derive" ] }
+serde = { version = "1.0.223", features = [ "derive" ] }
